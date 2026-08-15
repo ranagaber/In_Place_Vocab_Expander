@@ -4,9 +4,9 @@ A lightweight utility for expanding a pretrained Hugging Face tokenizer with a n
 
 ## Use Case
 
-This project is useful when a pretrained tokenizer heavily fragments text from a specific language or domain.
+This project is useful when a pretrained tokenizer heavily fragments text from a low-resource language.
 
-For example, a pretrained tokenizer may tokenize a diacritized Arabic word into several small subtokens. We can train a new SentencePiece tokenizer on Arabic text, add its new vocabulary to the pretrained tokenizer, and initialize the embeddings of the new tokens using the pretrained model's existing embeddings.
+For example, a pretrained tokenizer may tokenize a diacritized Arabic word into many small subtokens operating like a char level tokenizer. We can train a new SentencePiece tokenizer on under-resourced text, add its new vocabulary to the pretrained tokenizer, and initialize the embeddings of the new tokens using the pretrained model's existing embeddings.
 
 The workflow is:
 
@@ -39,8 +39,6 @@ Initialize new embeddings from old-token fragments
 ```
 
 ## Installation
-
-This project uses [uv](https://docs.astral.sh/uv/).
 
 ```bash
 uv sync
