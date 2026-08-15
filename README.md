@@ -1,7 +1,5 @@
 # Tokenizer Vocabulary Expansion
 
-A lightweight utility for expanding a pretrained Hugging Face tokenizer with a newly trained SentencePiece vocabulary.
-
 ## Use Case
 
 This project is designed to address the heavy token fragmentation often observed in low-resource languages.
