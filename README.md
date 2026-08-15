@@ -1,7 +1,5 @@
 # Tokenizer Vocabulary Expansion
 
-## Use Case
-
 This project is designed to address the heavy token fragmentation often observed in low-resource languages.
 
 For example, a pretrained tokenizer may tokenize a diacritized Arabic word into many small subtokens, effectively approaching character-level tokenization. We can train a new SentencePiece tokenizer on text from an under-resourced language, add its new vocabulary to the pretrained tokenizer, and initialize the embeddings of the newly added tokens using the pretrained model's existing embeddings.
