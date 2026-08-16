@@ -10,6 +10,54 @@ from token_exp.freeze_and_unfreeze import *
 import random 
 import numpy as np
 import torch
+import argparse
+
+def parse_args():
+    parser = argparse.ArgumentParser(
+        description = 'Expand Your Tokenizer and perform CPT!'
+    )
+    parser.add_argument(
+        "--model-id", 
+        type = str,
+        required = True, 
+        help = 'HuggingFace Model ID'
+    )
+    parser.add_argument(
+        "--txt-path",
+        type = str,
+        required = True,
+        help = 'Path to the corpus'
+    )
+    parser.add_argument(
+        "--type",
+        type = str,
+        required = True,
+        help = "LM or Seq2Seq"
+    )
+    parser.add_argument(
+        "--token",
+        type = str, 
+        required = True, 
+        help = "Hugging Face access token used to upload the model"
+    )
+    parser.add_argument(
+        "--repo-id",
+        type = str, 
+        required = True, 
+        help = "Hugging Face repository for the expanded model"
+    )
+    parser.add_argument(
+        "--final-repo",
+        type = str, 
+        required = True, 
+        help = "Hugging Face repository for the final CPT model"
+    )
+    parser.add_argument(
+        "--cpt",
+        action="store_true",
+        help="Perform CPT after vocabulary expansion."
+    )
+    return parser.parse_args()
 
 
 SEED = 42
@@ -49,13 +97,26 @@ def upload(model ,  tokenizer , token : str , repo_id : str , model_dir = "new_m
     )
 
 if __name__ == "__main__": 
-    token = "your token"
-    repo_id = "your id"
-    model_id = "your model"
-    txt_path = "your txt path"
-    type = "" #LM or Seq2Seq
-    cpt = False # boolean value if you want automatic CPT, CPT is only available for LMs till now.
-    final_repo = "your repo id after cpt"
+    args = parse_args()
+    print("In-Place Tokenizer Expansion")
+    print("=" * 40)
+    print(f"Model : {args.model_id}")
+    print(f"Corpus: {args.txt_path}")
+    print(f"Type  : {args.type}")
+    print(f"CPT   : {args.cpt}")
+    print("=" * 40)
+
+    token = args.token
+    repo_id = args.repo_id
+    model_id = args.model_id
+    txt_path = args.txt_path
+    type = args.type #LM or Seq2Seq
+    final_repo = args.final_repo
+    cpt = args.cpt
+    
+
+
+
     
     with open(txt_path, "r", encoding="utf-8-sig") as f:
         sentences = [line.strip() for line in f if line.strip()]
