@@ -2,7 +2,10 @@
 
 This project is designed to address the heavy token fragmentation often observed in low-resource languages.
 
-For example, a pretrained tokenizer may tokenize a diacritized Arabic word into many small subtokens, effectively approaching character-level tokenization. We can train a new SentencePiece tokenizer on text from an under-resourced language, add its new vocabulary to the pretrained tokenizer, and initialize the embeddings of the newly added tokens using the pretrained model's existing embeddings.
+For example, a pretrained tokenizer may tokenize a diacritized Arabic word into many small subtokens, effectively approaching character-level tokenization. We can train a new SentencePiece tokenizer on text from an under-resourced language, add its new vocabulary to the pretrained tokenizer, and initialize the embeddings of the newly added tokens using the pretrained model's existing embeddings. 
+The tool has an option to automatically perform Continued Pretraining (CPT) on **ONLY NEW EMBEDDINGS** using the same corpus used for vocabulary expansion to further refine the newly initialized embeddings.
+Further CPT for full weights is preferred.
+> **CUDA is required for Continued Pretraining.**
 
 The workflow is:
 
@@ -17,7 +20,11 @@ Add new tokens to pretrained tokenizer
      ↓
 Resize model embeddings
      ↓
-Initialize new embeddings from old-token fragments
+Initialize new embeddings from the mean of old-token fragments
+     ↓
+Optional Continued Pretraining (CPT)
+     ↓
+Refine the newly added embeddings only
 ```
 # Evaluation
 
@@ -39,8 +46,10 @@ The evaluation compares the original `google/gemma-3-1b-pt` tokenizer with the e
 ├── token_exp/
 │   ├── new_vocab.py
 │   ├── tokenizer_exp.py
+    ├── configs.py
+    ├── cpt.py
+    ├── main.py
 │   └── embedding_exp.py
-├── main.py
 ├── pyproject.toml
 ├── uv.lock
 └── README.md
@@ -58,11 +67,14 @@ Update the arguments in `main.py`:
 
 ```python
 if __name__ == "__main__":
-    main(
-        txt_path="path/to/training_corpus.txt",
-        model_id="your/model",
-        type="LM"
-    )
+    token = "your token"
+    repo_id = "your id"
+    model_id = "your model"
+    txt_path = "your txt path"
+    type = "" #LM or Seq2Seq
+    final_repo = "your repo id after cpt"
+    cpt = True/False
+    
 ```
 
 Then run:
@@ -71,43 +83,21 @@ Then run:
 uv run main.py
 ```
 
+
 ### Arguments
 
-| Argument   | Description                                                                 |
-| ---------- | --------------------------------------------------------------------------- |
-| `txt_path` | Path to the corpus used to train the new SentencePiece tokenizer            |
-| `model_id` | Hugging Face model ID of the pretrained model                               |
-| `type`     | `"LM"` for causal language models or `"Seq2Seq"` for encoder-decoder models |
+| Argument     | Description                                                                      |
+| ------------ | -------------------------------------------------------------------------------- |
+| `txt_path`   | Path to the corpus used to train the new SentencePiece tokenizer and perform CPT |
+| `model_id`   | Hugging Face model ID of the pretrained model                                    |
+| `type`       | `"LM"` for causal language models or `"Seq2Seq"` for encoder-decoder models      |
+| `token`      | Hugging Face access token used to upload the model                               |
+| `repo_id`    | Hugging Face repository for the expanded model                                   |
+| `final_repo` | Hugging Face repository for the final CPT model                                  |
+| `cpt`        | Boolean value to signal whether to perform CPT                               |
 
-## Example
 
-```python
-main(
-    txt_path="data/arabic_corpus.txt",
-    model_id="google/gemma-3-1b",
-    type="LM"
-)
-```
 
-## Saving the Expanded Model
-
-The pipeline returns:
-
-```python
-model, tokenizer
-```
-
-The expanded tokenizer can be saved with:
-
-```python
-tokenizer.save_pretrained("expanded_tokenizer")
-```
-
-and the model with:
-
-```python
-model.save_pretrained("expanded_model")
-```
 ## Citation
 
 This work is inspired by:

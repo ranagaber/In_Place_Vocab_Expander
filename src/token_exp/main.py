@@ -6,6 +6,7 @@ from token_exp.cpt import run_cpt
 from token_exp.configs import *
 from datasets import load_dataset , load_from_disk , Dataset
 from transformers import set_seed
+from token_exp.freeze_and_unfreeze import *
 import random 
 import numpy as np
 import torch
@@ -25,9 +26,9 @@ torch.backends.cudnn.benchmark = False
 
 def main(txt_path : str, model_id: str , type : str):
     vocab = pass_vocab(txt_path)
-    tokenizer , new_tokens = expand_tokenizer(model_id , vocab) 
+    tokenizer , new_tokens , new_token_ids = expand_tokenizer(model_id , vocab) 
     model = adjust_model(model_id, type, tokenizer, new_tokens)
-    return model, tokenizer
+    return model, tokenizer , new_token_ids
 def save(model , tokenizer , model_dir="new_model_and_tokenizer"):
     tokenizer.save_pretrained(model_dir)
     model.save_pretrained(model_dir)
@@ -53,30 +54,33 @@ if __name__ == "__main__":
     model_id = "your model"
     txt_path = "your txt path"
     type = "" #LM or Seq2Seq
+    cpt = False # boolean value if you want automatic CPT, CPT is only available for LMs till now.
     final_repo = "your repo id after cpt"
     
     with open(txt_path, "r", encoding="utf-8-sig") as f:
         sentences = [line.strip() for line in f if line.strip()]
     dataset = Dataset.from_dict({
               "Text": sentences})
-    model, tokenizer = main(
+    model, tokenizer , new_token_ids= main(
         txt_path=txt_path,
         model_id=model_id,
         type=type
     )
     save(model , tokenizer)
     upload(model, tokenizer, token = token , repo_id = repo_id)
+    if cpt:
+        if tokenizer.pad_token is None:
+           tokenizer.pad_token = tokenizer.eos_token
+        freeze_all_except_new_embeddings(model , new_token_ids)
+        new_model , new_tokenizer = run_cpt(
+                               model=model,
+                               train_dataset= dataset,
+                               output_dir=OUTPUT_DIR,
+                               peak_lr = lr,
+                               warmup_ratio=WARMUP_RATIO,
+                               epochs=NUM_EPOCHS,
+                               tokenizer=tokenizer,)
+        unfreeze_all(new_model)
+        upload(new_model, new_tokenizer, token = token , repo_id = final_repo)
 
-    if tokenizer.pad_token is None:
-        tokenizer.pad_token = tokenizer.eos_token
-    new_model , new_tokenizer = run_cpt(
-        model=model,
-        train_dataset= dataset,
-        output_dir=OUTPUT_DIR,
-        peak_lr = lr,
-        warmup_ratio=WARMUP_RATIO,
-        epochs=NUM_EPOCHS,
-        tokenizer=tokenizer,
-    )
-    upload(new_model, new_tokenizer, token = token , repo_id = final_repo)
 

@@ -11,9 +11,15 @@ def expand_tokenizer(model_id: str , vocab:dict):
         token for token in vocab if token not in old_vocab
     ]
     tokenizer.add_tokens(new_tokens)
+    
+    new_token_ids = {
+        token: tokenizer.convert_tokens_to_ids(token)
+        for token in new_tokens
+    }
+
     print("Existing vocab:", old_vocab_size)
     print("New tokens:", len(new_tokens))
-    return tokenizer , new_tokens
+    return tokenizer , new_tokens , new_token_ids
 
 
 
