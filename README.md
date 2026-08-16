@@ -59,7 +59,7 @@ The evaluation compares the original `google/gemma-3-1b-pt` tokenizer with the e
 
 ```bash
 uv sync
-
+```
 
 ## Usage
 
