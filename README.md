@@ -19,6 +19,18 @@ Resize model embeddings
      ↓
 Initialize new embeddings from old-token fragments
 ```
+# Evaluation
+
+The tokenizer was evaluated on a held-out corpus of **3,000 samples from the Tashkeela corpus**. These samples are distinct from the data used to train the tokenizer.
+
+The evaluation compares the original `google/gemma-3-1b-pt` tokenizer with the expanded `RanaGaber/gemma_1B_pt_diac` tokenizer.
+
+| Metric           | `google/gemma-3-1b-pt` | `RanaGaber/gemma_1B_pt_diac` |
+| ---------------- | ---------------------: | ---------------------------: |
+| **Total Words**  |                244,114 |                      244,114 |
+| **Total Tokens** |              1,019,110 |                      343,313 |
+| **Fertility**    |                  4.175 |                    **1.406** |
+
 
 ## Project Structure
 
