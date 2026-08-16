@@ -60,30 +60,32 @@ The evaluation compares the original `google/gemma-3-1b-pt` tokenizer with the e
 ```bash
 uv sync
 ```
-
 ## Usage
 
-Update the arguments in `main.py`:
+The project provides a command-line interface (CLI) for tokenizer expansion with optional Continued Pretraining (CPT).
 
-```python
-if __name__ == "__main__":
-    token = "your token"
-    repo_id = "your id"
-    model_id = "your model"
-    txt_path = "your txt path"
-    type = "" #LM or Seq2Seq
-    final_repo = "your repo id after cpt"
-    cpt = True/False
-    
-```
-
-Then run:
+### Run without CPT
 
 ```bash
-uv run main.py
-```
+uv run main.py \
+    --model-id "your/model" \
+    --txt-path "path/to/corpus.txt" \
+    --type "LM" \
+    --token "your_huggingface_token" \
+    --repo-id "your/expanded-model-repo" \
+    --final-repo "your/cpt-model-repo"
 
-
+### Run with CPT
+Add the --cpt flag:
+```bash
+uv run main.py \
+    --model-id "your/model" \
+    --txt-path "path/to/corpus.txt" \
+    --type "LM" \
+    --token "your_huggingface_token" \
+    --repo-id "your/expanded-model-repo" \
+    --final-repo "your/cpt-model-repo" \
+    --cpt
 ### Arguments
 
 | Argument     | Description                                                                      |
