@@ -59,7 +59,6 @@ The evaluation compares the original `google/gemma-3-1b-pt` tokenizer with the e
 
 ```bash
 uv sync
-```
 ## Usage
 
 The project provides a command-line interface (CLI) for tokenizer expansion with optional Continued Pretraining (CPT).
@@ -74,9 +73,12 @@ uv run main.py \
     --token "your_huggingface_token" \
     --repo-id "your/expanded-model-repo" \
     --final-repo "your/cpt-model-repo"
+```
 
 ### Run with CPT
-Add the --cpt flag:
+
+Add the `--cpt` flag:
+
 ```bash
 uv run main.py \
     --model-id "your/model" \
@@ -86,21 +88,27 @@ uv run main.py \
     --repo-id "your/expanded-model-repo" \
     --final-repo "your/cpt-model-repo" \
     --cpt
-
+```
 
 ### Arguments
 
-| Argument     | Description                                                                      |
-| ------------ | -------------------------------------------------------------------------------- |
-| `txt_path`   | Path to the corpus used to train the new SentencePiece tokenizer and perform CPT |
-| `model_id`   | Hugging Face model ID of the pretrained model                                    |
-| `type`       | `"LM"` for causal language models or `"Seq2Seq"` for encoder-decoder models      |
-| `token`      | Hugging Face access token used to upload the model                               |
-| `repo_id`    | Hugging Face repository for the expanded model                                   |
-| `final_repo` | Hugging Face repository for the final CPT model                                  |
-| `cpt`        | Boolean value to signal whether to perform CPT                               |
+| Argument | Description |
+| --- | --- |
+| `--txt-path` | Path to the corpus used to train the new SentencePiece tokenizer and perform CPT. |
+| `--model-id` | Hugging Face model ID of the pretrained model. |
+| `--type` | `"LM"` for causal language models or `"Seq2Seq"` for encoder-decoder models. |
+| `--token` | Hugging Face access token used to upload the model. |
+| `--repo-id` | Hugging Face repository for the expanded model. |
+| `--final-repo` | Hugging Face repository for the final CPT model. |
+| `--cpt` | Optional flag to perform CPT after tokenizer expansion. |
 
+> **Note:** CPT is currently supported for `LM` models only.
 
+To see all available CLI options:
+
+```bash
+uv run main.py --help
+```
 
 ## Citation
 
@@ -116,3 +124,4 @@ This work is inspired by:
       primaryClass={cs.CL},
       url={https://arxiv.org/abs/2607.15232}, 
 }
+```
